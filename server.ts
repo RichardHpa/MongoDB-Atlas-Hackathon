@@ -1,7 +1,10 @@
 require('dotenv').config();
 import express from 'express';
-// rest of the code remains same
+import { connect } from './database/connection';
+
 const app = express();
+
+connect();
 
 app.get('/', (req, res) => res.send('Welcome to the server'));
 
