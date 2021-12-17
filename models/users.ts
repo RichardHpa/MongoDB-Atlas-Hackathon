@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import type { User as UserType } from '../_types/User';
 
 const schema = new Schema({
   email: { type: String, unique: true, required: true },
@@ -16,6 +17,10 @@ const schema = new Schema({
   passwordReset: Date,
   created: { type: Date, default: Date.now },
   updated: Date,
+});
+
+schema.virtual('isVerified').get(function (this: UserType) {
+  return !!(this.verified || this.passwordReset);
 });
 
 const Users = model('Users', schema);

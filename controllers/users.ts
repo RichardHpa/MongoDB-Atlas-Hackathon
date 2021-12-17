@@ -1,11 +1,13 @@
 require('dotenv').config();
 import type { Request, Response } from 'express';
 import { Router } from 'express';
-import { Users } from '../models/Users';
+import { Users } from '../models/users';
+import { RefreshToken } from '../models/refreshToken';
 import { roles } from '../_helpers/roles';
 import bcrypt from 'bcryptjs';
 import { sendEmail } from '../_helpers/sendEmail';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 
 import type { User } from '../_types/User';
 
@@ -49,12 +51,36 @@ userRoutes.post('/register', async (req: Request, res: Response) => {
   });
 });
 
-userRoutes.get('/verify-email', (req: Request, res: Response) => {
-  res.send('verify-email');
+userRoutes.get('/verify-email', async (req: Request, res: Response) => {
+  const { token } = req.query;
+  const user = await Users.findOne({ verificationToken: token });
+
+  if (!user) throw 'Verification failed';
+
+  user.verified = Date.now();
+  user.verificationToken = undefined;
+  await user.save();
+  res.send('Verification successful, you can now login');
 });
 
-userRoutes.post('/login', (req: Request, res: Response) => {
-  res.send('login');
+userRoutes.post('/login', async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  Users.findOne({ email }).then(async foundUser => {
+    if (!foundUser || !foundUser.isVerified || !bcrypt.compareSync(password, foundUser.password)) {
+      return res.status(500).json({
+        message: 'Email or password is incorrect',
+      });
+    }
+
+    const jwtToken = generateJwtToken(foundUser);
+    const refreshToken = generateRefreshToken(foundUser, req.ip);
+
+    await refreshToken.save();
+
+    const user = foundUser.toObject();
+    setTokenCookie(res, refreshToken);
+    return res.json({ ...user, token: jwtToken });
+  });
 });
 
 function hash(password: string) {
@@ -83,6 +109,32 @@ async function sendVerificationEmail(account: User, origin: string) {
              <p>Thanks for registering!</p>
              ${message}`,
   });
+}
+
+function generateJwtToken(user: User) {
+  // create a jwt token containing the account id that expires in 15 minutes
+  return jwt.sign({ sub: user.id, id: user.id }, process.env.JWT_SECRET as string, {
+    expiresIn: '15m',
+  });
+}
+
+function generateRefreshToken(user: User, ipAddress: string) {
+  // create a refresh token that expires in 7 days
+  return new RefreshToken({
+    account: user.id,
+    token: randomTokenString(),
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    createdByIp: ipAddress,
+  });
+}
+
+function setTokenCookie(res: Response, token: string) {
+  // create cookie with refresh token that expires in 7 days
+  const cookieOptions = {
+    httpOnly: true,
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  };
+  res.cookie('refreshToken', token, cookieOptions);
 }
 
 export { userRoutes };
