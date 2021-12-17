@@ -1,35 +1,22 @@
 {
   "compilerOptions": {
-    "strict": true,
-    "target": "ESNext",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext",
-    ],
-    "noEmit": true,
-    "declaration": false,
-    "jsx": "react-jsx",
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "noImplicitAny": true,
-    "noUnusedParameters": true,
-    "noUnusedLocals": true,
-    "module": "ESNext",
-    "allowSyntheticDefaultImports": true,
-    "removeComments": true,
-    "rootDir": "./",
-    "baseUrl": "./",
-    "outDir": "./dist",
-    "esModuleInterop": true,
-    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "*": ["./*"],
+    },
   },
-  "include": [
-    "./client",
-    "./controllers",
-    "./database",
-    "./models",
-    "_helpers",
-    "_routes",
-  ]
+  "files": [],
+  "exclude": [
+    "node_modules",
+    "client/node_modules",
+    "server/node_modules",
+    "dist",
+  ],
+  "references": [
+    {
+      "path": "./client"
+    },
+    {
+      "path": "./server"
+    }
+  ],
 }

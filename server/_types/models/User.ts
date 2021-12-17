@@ -12,6 +12,6 @@ export interface User {
     expires: string;
   };
   passwordReset?: string;
-  created?: string;
+  created?: number;
   updated?: string;
 }
