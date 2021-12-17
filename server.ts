@@ -15,6 +15,11 @@ app.use(cookieParser());
 // allow cors requests from any origin and with credentials
 app.use(cors({ origin: (origin, callback) => callback(null, true), credentials: true }));
 
+app.use(function (req, res, next) {
+  console.log(`${req.method} request for ${req.url}`);
+  next();
+});
+
 if (process.env.DB_CONNECTION === 'true') {
   connect();
 }
