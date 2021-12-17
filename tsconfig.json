@@ -23,9 +23,6 @@
     "outDir": "./dist",
     "esModuleInterop": true,
     "noFallthroughCasesInSwitch": true,
-    "paths": {
-      "*": ["./node_modules/*", "./src/*", "./*"],
-    },
   },
   "include": [
     "./client",
