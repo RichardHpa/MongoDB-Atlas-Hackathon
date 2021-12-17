@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "React Leaderboard",
+  "name": "React Leaderboard",
   "icons": [
     {
       "src": "favicon.ico",
