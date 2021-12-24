@@ -1,3 +1,9 @@
-/node_modules
 .env
 .DS_Store
+
+# NPM
+/**/node_modules
+
+# Build Process
+/dist
+package.tgz

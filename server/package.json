@@ -2,7 +2,8 @@
   "name": "mongodbatlashackathon",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.ts",
+  
   "scripts": {
     "start:server": "ts-node server.ts",
     "start:client": "npm start --prefix client",

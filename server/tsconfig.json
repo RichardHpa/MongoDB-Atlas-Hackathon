@@ -4,6 +4,5 @@
     "baseUrl": ".",
     "outDir": "../dist",
     "rootDir": "./",
-    "jsx": "react-jsx",
   },
 }
